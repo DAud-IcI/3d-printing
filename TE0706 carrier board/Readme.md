@@ -14,6 +14,10 @@ _Hastlayer is a property of Lombiq Technologies Ltd._
 
 The [OpenSCAD](https://openscad.org/) source file is available at the _TE0706 carrier board_ directory on my [GitHub repository](https://github.com/DAud-IcI/3d-printing/). The files there are licensed under [LGPL](https://raw.githubusercontent.com/DAud-IcI/3d-printing/main/LICENSE).
 
+## Thingiverse
+
+You can also find the STL at Thingiverse [here](https://www.thingiverse.com/thing:4933893) (pending approval).
+
 ## Images
 
 - ![1.jpg](1.jpg)

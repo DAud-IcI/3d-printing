@@ -13,3 +13,10 @@ _Hastlayer is a property of Lombiq Technologies Ltd._
 ## Customization
 
 The [OpenSCAD](https://openscad.org/) source file is available at the _TE0706 carrier board_ directory on my [GitHub repository](https://github.com/DAud-IcI/3d-printing/). The files there are licensed under [LGPL](https://raw.githubusercontent.com/DAud-IcI/3d-printing/main/LICENSE).
+
+## Images
+
+- ![1.jpg](1.jpg)
+- ![2.jpg](2.jpg)
+- ![3.jpg](3.jpg)
+- ![4.jpg](4.jpg)

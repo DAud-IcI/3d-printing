@@ -9,6 +9,7 @@ unit_bottom_gap = 4.21 * phy_div;
 
 clearance = 2 * phy_div;
 wall = 3 * phy_div;
+chassis_clearance = 2 * clearance + 2 * wall;
 
 edge_screw_radius = 32 / 2;
 screw_0x = 68 - edge_screw_radius;
@@ -50,12 +51,18 @@ serial_y1 = 12.77 * phy_div + height;
 serial_y0 = serial_y1 - 8 * phy_div;
 
 max_y = eth_y;
-box_height = wall + unit_bottom_gap + max_y + clearance;
+box_height = wall + unit_bottom_gap + max_y + clearance + wall;
+
+board_coordinates = [wall + clearance, wall + clearance, wall];
 
 module hole(x,y,r,h) translate([x, y, -1]) cylinder(h + 2, r, r);
 
-module holes(h = height, radius_more = 0) {
+module hole0(h = height, radius_more = 0) {
     hole(screw_0x, screw_0z, edge_screw_radius + radius_more, h);
+}
+
+module holes(h = height, radius_more = 0) {
+    hole0(h, radius_more);
     hole(screw_1x, screw_1z, screw_radius + radius_more, h);
     hole(screw_2x, screw_2z, screw_radius + radius_more, h);
     hole(screw_3x, screw_3z, screw_radius + radius_more, h);
@@ -80,8 +87,6 @@ module baseboard()
     }
 
 module chassis_bottom() {
-    chassis_clearance = 2 * clearance + 2 * wall;
-        
     difference() {
         cube([
             width + chassis_clearance,
@@ -116,7 +121,7 @@ module chassis_bottom() {
             translate([0, serial_z, serial_y0]) cube([100,gap_serial,serial_y1 - serial_y0]);
         };
         
-        //* Branding
+        /* Branding
         translate([50, 10, 50])
             scale([1,10,1])
             rotate([90,0,0])    
@@ -128,7 +133,35 @@ module chassis_bottom() {
     }
 }
 
+module chassis_top() {
+    difference() {
+        union() {
+            // Top flush layer
+            translate([0, 0, box_height]) 
+                cube([
+                    width + chassis_clearance,
+                    depth + chassis_clearance,
+                    wall], center = false);
+            // Bottom indented layer
+            translate([wall, wall, box_height - wall]) 
+                cube([
+                    width + 2 * clearance,
+                    depth + 2 * clearance,
+                    wall], center = false);
+        }
+        
+        // Bottom left screw hole
+        translate(board_coordinates) {
+            scale([1, 1, 10]) 
+                translate([0, 0, -unit_bottom_gap / 2]) 
+                    hole0(unit_bottom_gap + wall);
+        }
+    }
+}
+
 scale(1 / phy_div) {
+    //* Bottom chassis model
+    color("azure")
     union() {
         // Board illustration
         //translate([wall + clearance, wall + clearance, wall + unit_bottom_gap]) baseboard();
@@ -141,10 +174,15 @@ scale(1 / phy_div) {
             
             // Cutoff for an underside capacitor.
             // Board coordinates.
-            translate([wall + clearance, wall + clearance, wall]) 
+            translate(board_coordinates) 
                 // Bottom left of the #1 post.
                 translate([screw_1x - screw_radius - wall, screw_1z - screw_radius - wall, 0])
                 cube([0.75 * wall, 2 * wall + 2 * screw_radius, 1000]);
         }
-    }
+    } // */
+    
+    //* Top chassis model
+    color("lightblue")
+    chassis_top();
+    // */
 }

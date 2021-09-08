@@ -24,3 +24,7 @@ You can also find the STL at Thingiverse [here](https://www.thingiverse.com/thin
 - ![2.jpg](2.jpg)
 - ![3.jpg](3.jpg)
 - ![4.jpg](4.jpg)
+
+## Attribution
+
+The brushless DC fan used for reference during the fan intake design is by [Umberto Arena](https://grabcad.com/library/fan_bb5015h12-1)

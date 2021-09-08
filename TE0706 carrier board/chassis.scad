@@ -50,6 +50,14 @@ serial_z = 30;
 serial_y1 = 12.77 * phy_div + height;
 serial_y0 = serial_y1 - 8 * phy_div;
 
+intake_x = 401;
+intake_y = 306;
+intake_size = 118;
+fan_h = 132;
+fan_h0 = fan_h - intake_size;
+fan_w = 176;
+fan_w0 = fan_w - intake_size;
+
 max_y = eth_y;
 box_height = wall + unit_bottom_gap + max_y + clearance + wall;
 
@@ -121,7 +129,7 @@ module chassis_bottom() {
             translate([0, serial_z, serial_y0]) cube([100,gap_serial,serial_y1 - serial_y0]);
         };
         
-        /* Branding
+        //* Branding
         translate([50, 10, 50])
             scale([1,10,1])
             rotate([90,0,0])    
@@ -150,22 +158,71 @@ module chassis_top() {
                     wall], center = false);
         }
         
-        // Bottom left screw hole
         translate(board_coordinates) {
+            // Bottom left screw hole
             scale([1, 1, 10]) 
                 translate([0, 0, -unit_bottom_gap / 2]) 
                     hole0(unit_bottom_gap + wall);
+            
+            // Intake hole
+            translate([intake_x, intake_y, 0])
+            cube([intake_size, intake_size, box_height * 2], center = false);
+        }
+    }
+}
+
+// Placeholder for the fan - base top left corner is origin
+module fan() {
+    scale(phy_div) {
+        //translate([0, -50.69, 0]) cube([51.37, 50.69, 10], center=false); // 51.37mm x 50.69mm
+        import("FANBB5015H12.stl");
+    }
+}
+
+module funnel_shape(lip, lip_offset = 0, inset = 0) {
+    union() {
+        translate([inset, inset, -lip + lip_offset]) 
+            linear_extrude(lip)
+                square(intake_size - 2 * inset, center = false);
+        
+        hull() {
+            translate([inset, inset, 0])
+                linear_extrude(1)
+                    square(intake_size - 2 * inset, center = false);
+         
+            for (i = [0 : 10])
+            translate([intake_size, 75 + inset, 17 + inset])
+                rotate([0, (i * -9) - 90, 0])
+                    linear_extrude(1)
+                        square([
+                            fan_h - (fan_h0 * i / 10.0) - 2 * inset,
+                            fan_w - (fan_w0 * i / 10.0) - 2 * inset], center = false); 
+        }
+        translate([intake_size + lip - lip_offset, 75 + inset, 17 + inset])
+            rotate([0, -90, 0])
+                linear_extrude(lip)
+                    square([fan_h - 2 * inset, fan_w - 2 * inset], center = false);
+    }
+}
+
+module funnel() {
+    inside_mul = 0.8;
+    translate([intake_x, intake_y, box_height])
+    {
+        difference() {
+            funnel_shape(wall);
+            funnel_shape(wall * 10, 1, wall / 2);
         }
     }
 }
 
 scale(1 / phy_div) {
+    // Board illustration
+    //translate([wall + clearance, wall + clearance, wall + unit_bottom_gap]) baseboard();
+    
     //* Bottom chassis model
     color("azure")
     union() {
-        // Board illustration
-        //translate([wall + clearance, wall + clearance, wall + unit_bottom_gap]) baseboard();
-        
         chassis_bottom();
         
         // Screw posts.
@@ -184,5 +241,14 @@ scale(1 / phy_div) {
     //* Top chassis model
     color("lightblue")
     chassis_top();
+    // */
+    
+    //* Funnel between the fan and the air intake
+    translate(board_coordinates) {
+        color("lightgreen")
+        funnel();
+        
+        //translate([intake_x + intake_size, intake_y + intake_size + 150, box_height]) fan(); 
+    }
     // */
 }

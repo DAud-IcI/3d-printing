@@ -50,6 +50,7 @@ serial_y1 = 12.77 * phy_div + height;
 serial_y0 = serial_y1 - 8 * phy_div;
 
 max_y = eth_y;
+box_height = wall + unit_bottom_gap + max_y + clearance;
 
 module hole(x,y,r,h) translate([x, y, -1]) cylinder(h + 2, r, r);
 
@@ -85,7 +86,7 @@ module chassis_bottom() {
         cube([
             width + chassis_clearance,
             depth + chassis_clearance,
-            wall + unit_bottom_gap + max_y + clearance], center = false);
+            box_height], center = false);
         
         translate([wall + clearance, wall + clearance, 0]) 
             scale([1, 1, 10]) 
@@ -96,7 +97,7 @@ module chassis_bottom() {
             cube([
                 width + 2 * clearance,
                 depth + 2 * clearance,
-                wall + unit_bottom_gap + max_y + clearance], center = false);
+                box_height], center = false);
         
         translate([-10, wall + clearance, wall + unit_bottom_gap]) union() {
             translate([0, barrel_z, height]) cube([100,gap_barrel,barrel_y - height]);
@@ -115,7 +116,7 @@ module chassis_bottom() {
             translate([0, serial_z, serial_y0]) cube([100,gap_serial,serial_y1 - serial_y0]);
         };
         
-        //*
+        //* Branding
         translate([50, 10, 50])
             scale([1,10,1])
             rotate([90,0,0])    
@@ -127,10 +128,14 @@ module chassis_bottom() {
     }
 }
 
-scale(1 / phy_div) 
+scale(1 / phy_div) {
     union() {
+        // Board illustration
         //translate([wall + clearance, wall + clearance, wall + unit_bottom_gap]) baseboard();
+        
         chassis_bottom();
+        
+        // Screw posts.
         difference() {
             translate([wall + clearance, wall + clearance, 0]) post();
             
@@ -142,4 +147,4 @@ scale(1 / phy_div)
                 cube([0.75 * wall, 2 * wall + 2 * screw_radius, 1000]);
         }
     }
-
+}

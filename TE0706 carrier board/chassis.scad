@@ -168,6 +168,17 @@ module chassis_top() {
             translate([intake_x, intake_y, 0])
             cube([intake_size, intake_size, box_height * 2], center = false);
         }
+        
+        // Fan power connector hole
+        fan_wire_hole_size = 10 * phy_div;
+        translate([75 * phy_div, 12 * phy_div, 0])
+            cube([fan_wire_hole_size, fan_wire_hole_size, box_height * 2], center=false);
+        
+        // Fan screw holes
+        translate([658, 121, 0])
+            cylinder(h = box_height * 2, r = screw_radius);
+        translate([1060.5, 577.5, 0])
+            cylinder(h = box_height * 2, r = screw_radius);
     }
 }
 
@@ -240,7 +251,7 @@ scale(1 / phy_div) {
     
     //* Top chassis model
     color("lightblue")
-    chassis_top();
+        chassis_top();
     // */
     
     //* Funnel between the fan and the air intake
